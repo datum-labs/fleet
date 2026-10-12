@@ -1,120 +1,60 @@
-# Service Template
+# Fleet Manager
 
-> **This is a GitHub template repository.** Click "Use this template" to create
-> a new Kubernetes aggregated API server for your own custom resources.
+Fleet Manager is an incubating Datum service for managing machine fleets and
+their lifecycle through Kubernetes-style APIs.
 
-A production-ready template for building Kubernetes aggregated API servers. This
-provides all the scaffolding and boilerplate needed to create custom Kubernetes
-APIs that integrate seamlessly with `kubectl` and the Kubernetes ecosystem.
+The repository currently contains the service and deployment scaffold. The API
+group `fleet.datumapis.com` and its initial `v1alpha1` version are reserved, but
+the server intentionally publishes no resources until the first API contract is
+accepted and implemented. This avoids turning template examples into a public
+contract.
 
-## What's Included
+## Repository layout
 
-- **Full API server scaffolding**: Production-ready Kubernetes aggregated API
-  server setup
-- **Example custom resource**: `ExampleResource` showing best practices
-- **OpenAPI/Swagger integration**: Automatic API documentation generation
-- **Metrics & monitoring**: Prometheus metrics built-in
-- **Version management**: Git-based version injection
-- **Development tooling**: Task-based build system, Docker support
-- **Code generation**: Kubernetes code-gen integration for deepcopy and clients
+- `cmd/fleet-manager`: service entry point and command-line options
+- `internal/apiserver`: Kubernetes aggregated API server setup
+- `pkg/apis/fleet-manager`: API group registration
+- `pkg/apis/fleet/v1alpha1`: proposed allocation and installation contracts,
+  with validation tests; these types are not served yet
+- `config`: Kustomize base and optional deployment components
+- `.github/workflows`: tests and release artifact publishing
 
-The template includes a working `ExampleResource` as a concrete example. You'll
-customize this to create your own resources like `DataProcessing`, `BackupJob`,
-`AnalyticsQuery`, etc.
+Read the [proposal investigation](docs/proposal-investigation.md) for the full
+service design and open decisions, and the [first contract slice](docs/allocation-contract-slice.md)
+for the exact scope of the initial Go types.
 
-## Using This Template
+## Development
 
-### 1. Create Repository
-Click "Use this template" on GitHub to create your new repository.
+Requirements:
 
-### 2. Find & Replace
+- Go 1.26 or later
+- [Task](https://taskfile.dev) for the convenience commands
+- Docker for building the container image
 
-Use global find-and-replace (case-sensitive) across all files:
-
-| Find | Replace With | Example |
-|------|-------------|---------|
-| `github.com/example-org/example-service` | Your module path | `github.com/myorg/myservice` |
-| `example.example-org.io` | Your API group | `myresource.mycompany.io` |
-| `ghcr.io/example-org/example-service` | Your container registry | `ghcr.io/myorg/myservice` |
-| `example-service` | Your service name | `myservice` |
-| `ExampleService` | Your service name | `MyService` |
-| `ExampleResource` | Your resource type | `DataProcessing` |
-
-### 3. Rename Directories
+Run the local checks:
 
 ```bash
-mv cmd/example-service cmd/myservice
-mv pkg/apis/example-service pkg/apis/myservice
-```
-
-### 4. Customize API Types
-
-Edit `pkg/apis/myservice/v1alpha1/types.go`:
-- Rename `ExampleResource` to your resource type
-- Update `ExampleResourceSpec` fields for your use case
-- Update `ExampleResourceStatus` fields for your status
-- Review `genclient` directives for your needs (namespaced vs cluster-scoped,
-  allowed verbs)
-
-### 5. Build & Generate
-
-```bash
-go mod tidy
-task generate
 task build
 task test
+task vet
 ```
 
-### 6. Implement Storage Backend
-
-The main TODO is in `internal/apiserver/apiserver.go` - look for the `TEMPLATE
-NOTE` comment. You need to:
-- Create a REST storage implementation
-- Connect to your backend (database, API, cache, etc.)
-- Implement CRUD operations
-- Register storage in the apiserver
-
-See the [Kubernetes
-sample-apiserver](https://github.com/kubernetes/sample-apiserver/tree/master/pkg/registry)
-for examples.
-
-### 7. Deploy (Optional)
-
-Test deployment to a Kubernetes cluster:
+Build the development image:
 
 ```bash
-# Review deployment manifests
-cat config/README.md
-
-# Generate and review manifests
-kubectl kustomize config/base
-
-# Deploy to cluster (requires TLS certs)
-./config/deploy-dev.sh
+task dev:build
 ```
 
-See [config/README.md](config/README.md) for detailed deployment instructions.
+The image is `ghcr.io/datum-labs/fleet-manager`. See
+[`config/README.md`](config/README.md) for the deployment manifests and their
+current limitations.
 
-### 8. Clean Up
+## Status
 
-Search for `TEMPLATE NOTE` comments throughout the codebase and remove them once
-you've addressed each customization point.
-
-## Prerequisites
-
-**For users:**
-- Kubernetes 1.34+ cluster
-- kubectl configured to access your cluster
-
-**For developers:**
-- Go 1.25.0 or later
-- [Task](https://taskfile.dev) for development workflows
-- Docker for building container images
+This repository lives in `datum-labs` while the service and its API contracts
+are being developed. It is not a production service yet.
 
 ## License
 
-See [LICENSE](LICENSE) for details.
-
----
-
-**Questions or feedback?** Open an issue—we're here to help!
+Fleet Manager is licensed under the GNU Affero General Public License v3.0. See
+[`LICENSE`](LICENSE).

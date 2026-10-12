@@ -6,9 +6,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
-// TEMPLATE NOTE: Change this to your API group domain (e.g., "myresource.mycompany.io")
-// GroupName is the group name for the search API
-const GroupName = "example.example-org.io"
+// GroupName is the API group reserved for fleet-manager resources.
+const GroupName = "fleet.datumapis.com"
 
 // SchemeGroupVersion is group version used to register these objects
 var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: "v1alpha1"}
@@ -25,12 +24,10 @@ func Resource(resource string) schema.GroupResource {
 	return SchemeGroupVersion.WithResource(resource).GroupResource()
 }
 
-// addKnownTypes adds the set of types defined in this package to the supplied scheme
+// addKnownTypes registers the group version. Resource types will be added once
+// the initial API contract is accepted; the service must not advertise template
+// resources as if they were part of the fleet API.
 func addKnownTypes(scheme *runtime.Scheme) error {
-	scheme.AddKnownTypes(SchemeGroupVersion,
-		&ExampleResource{},
-		&ExampleResourceList{},
-	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
 }

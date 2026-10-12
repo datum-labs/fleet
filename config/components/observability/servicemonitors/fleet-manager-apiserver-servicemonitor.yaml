@@ -1,16 +1,16 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: example-service-apiserver
+  name: fleet-manager-apiserver
   labels:
-    app: example-service-apiserver
-    app.kubernetes.io/name: example-service-apiserver
+    app: fleet-manager-apiserver
+    app.kubernetes.io/name: fleet-manager-apiserver
     app.kubernetes.io/component: apiserver
     monitoring: "true"
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: example-service
+      app.kubernetes.io/name: fleet-manager
   endpoints:
     - port: https
       path: /metrics
@@ -34,4 +34,4 @@ spec:
           targetLabel: service
   namespaceSelector:
     matchNames:
-      - example-system
+      - fleet-system

@@ -21,25 +21,19 @@ COPY cmd/ cmd/
 COPY pkg/ pkg/
 COPY internal/ internal/
 
-# TEMPLATE NOTE: Update the ldflags module path and binary name
-# Change 'github.com/example-org/example-service' to your module path
-# Change 'example-service' output name to your service name
-# Change './cmd/example-service' to your cmd directory
 # Build the binary with version information
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
-    -ldflags="-X 'github.com/example-org/example-service/internal/version.Version=${VERSION}' \
-              -X 'github.com/example-org/example-service/internal/version.GitCommit=${GIT_COMMIT}' \
-              -X 'github.com/example-org/example-service/internal/version.GitTreeState=${GIT_TREE_STATE}' \
-              -X 'github.com/example-org/example-service/internal/version.BuildDate=${BUILD_DATE}'" \
-    -a -o example-service ./cmd/example-service
+    -ldflags="-X 'go.datum.net/fleet-manager/internal/version.Version=${VERSION}' \
+              -X 'go.datum.net/fleet-manager/internal/version.GitCommit=${GIT_COMMIT}' \
+              -X 'go.datum.net/fleet-manager/internal/version.GitTreeState=${GIT_TREE_STATE}' \
+              -X 'go.datum.net/fleet-manager/internal/version.BuildDate=${BUILD_DATE}'" \
+    -a -o fleet-manager ./cmd/fleet-manager
 
 # Runtime stage
 FROM gcr.io/distroless/static:nonroot
 
 WORKDIR /
-# TEMPLATE NOTE: Update binary name to match your service
-COPY --from=builder /workspace/example-service .
+COPY --from=builder /workspace/fleet-manager .
 USER 65532:65532
 
-# TEMPLATE NOTE: Update entrypoint to match your binary name
-ENTRYPOINT ["/example-service"]
+ENTRYPOINT ["/fleet-manager"]

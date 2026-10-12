@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	searchapiserver "github.com/example-org/example-service/internal/apiserver"
-	"github.com/example-org/example-service/internal/version"
-	"github.com/example-org/example-service/pkg/generated/openapi"
+	fleetapiserver "go.datum.net/fleet-manager/internal/apiserver"
+	"go.datum.net/fleet-manager/internal/version"
+	"go.datum.net/fleet-manager/pkg/generated/openapi"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	apiopenapi "k8s.io/apiserver/pkg/endpoints/openapi"
 	genericapiserver "k8s.io/apiserver/pkg/server"
@@ -32,22 +32,19 @@ func init() {
 }
 
 func main() {
-	cmd := NewExampleServiceServerCommand()
+	cmd := NewFleetManagerCommand()
 	code := cli.Run(cmd)
 	os.Exit(code)
 }
 
-// NewExampleServiceServerCommand creates the root command with subcommands for the search server.
-//
-// TEMPLATE NOTE: Rename this function and update the cobra.Command to match your service name.
-func NewExampleServiceServerCommand() *cobra.Command {
+// NewFleetManagerCommand creates the root command.
+func NewFleetManagerCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "search",
-		Short: "ExampleService - generic aggregated API server",
-		Long: `ExampleService is a generic Kubernetes aggregated API server that can be extended
-with custom search implementations.
+		Use:   "fleet-manager",
+		Short: "Datum fleet management service",
+		Long: `Fleet manager is an incubating Datum service for managing machine fleets.
 
-Exposes ExampleResource resources accessible through kubectl or any Kubernetes client.`,
+No resource API is served until its initial contract is accepted and implemented.`,
 	}
 
 	cmd.AddCommand(NewServeCommand())
@@ -58,14 +55,12 @@ Exposes ExampleResource resources accessible through kubectl or any Kubernetes c
 
 // NewServeCommand creates the serve subcommand that starts the API server.
 func NewServeCommand() *cobra.Command {
-	options := NewExampleServiceServerOptions()
+	options := NewFleetManagerOptions()
 
 	cmd := &cobra.Command{
 		Use:   "serve",
 		Short: "Start the API server",
-		Long: `Start the API server and begin serving requests.
-
-Exposes ExampleResource resources through kubectl.`,
+		Long:  "Start the fleet manager API server.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := options.Complete(); err != nil {
 				return err
@@ -94,7 +89,7 @@ func NewVersionCommand() *cobra.Command {
 		Long:  `Show the version, git commit, and build details.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			info := version.Get()
-			fmt.Printf("ExampleService Server\n")
+			fmt.Printf("Fleet Manager Server\n")
 			fmt.Printf("  Version:       %s\n", info.Version)
 			fmt.Printf("  Git Commit:    %s\n", info.GitCommit)
 			fmt.Printf("  Git Tree:      %s\n", info.GitTreeState)
@@ -108,22 +103,19 @@ func NewVersionCommand() *cobra.Command {
 	return cmd
 }
 
-// ExampleServiceServerOptions contains configuration for the search server.
-//
-// TEMPLATE NOTE: Rename this type to match your service.
-// Add custom configuration fields here as needed.
-type ExampleServiceServerOptions struct {
+// FleetManagerOptions contains API server configuration.
+type FleetManagerOptions struct {
 	RecommendedOptions *options.RecommendedOptions
 	Logs               *logsapi.LoggingConfiguration
 	// Add your custom options here
 }
 
-// NewExampleServiceServerOptions creates options with default values.
-func NewExampleServiceServerOptions() *ExampleServiceServerOptions {
-	o := &ExampleServiceServerOptions{
+// NewFleetManagerOptions creates options with default values.
+func NewFleetManagerOptions() *FleetManagerOptions {
+	o := &FleetManagerOptions{
 		RecommendedOptions: options.NewRecommendedOptions(
-			"/registry/example.example-org.io", // TEMPLATE NOTE: Change this to your API group
-			searchapiserver.Codecs.LegacyCodec(searchapiserver.Scheme.PrioritizedVersionsAllGroups()...),
+			"/registry/fleet.datumapis.com",
+			fleetapiserver.Codecs.LegacyCodec(fleetapiserver.Scheme.PrioritizedVersionsAllGroups()...),
 		),
 		Logs: logsapi.NewLoggingConfiguration(),
 	}
@@ -137,56 +129,56 @@ func NewExampleServiceServerOptions() *ExampleServiceServerOptions {
 	return o
 }
 
-func (o *ExampleServiceServerOptions) AddFlags(fs *pflag.FlagSet) {
+func (o *FleetManagerOptions) AddFlags(fs *pflag.FlagSet) {
 	o.RecommendedOptions.AddFlags(fs)
 }
 
-func (o *ExampleServiceServerOptions) Complete() error {
+func (o *FleetManagerOptions) Complete() error {
 	return nil
 }
 
 // Validate ensures required configuration is provided.
-func (o *ExampleServiceServerOptions) Validate() error {
+func (o *FleetManagerOptions) Validate() error {
 	// Add validation as needed
 	return nil
 }
 
 // Config builds the complete server configuration from options.
-func (o *ExampleServiceServerOptions) Config() (*searchapiserver.Config, error) {
+func (o *FleetManagerOptions) Config() (*fleetapiserver.Config, error) {
 	if err := o.RecommendedOptions.SecureServing.MaybeDefaultWithSelfSignedCerts(
 		"localhost", nil, nil); err != nil {
 		return nil, fmt.Errorf("error creating self-signed certificates: %v", err)
 	}
 
-	genericConfig := genericapiserver.NewRecommendedConfig(searchapiserver.Codecs)
+	genericConfig := genericapiserver.NewRecommendedConfig(fleetapiserver.Codecs)
 
 	// Set effective version to match the Kubernetes version we're built against.
 	genericConfig.EffectiveVersion = basecompatibility.NewEffectiveVersionFromString("1.34", "", "")
 
-	namer := apiopenapi.NewDefinitionNamer(searchapiserver.Scheme)
+	namer := apiopenapi.NewDefinitionNamer(fleetapiserver.Scheme)
 	genericConfig.OpenAPIV3Config = genericapiserver.DefaultOpenAPIV3Config(openapi.GetOpenAPIDefinitions, namer)
-	genericConfig.OpenAPIV3Config.Info.Title = "ExampleService"
+	genericConfig.OpenAPIV3Config.Info.Title = "Fleet Manager"
 	genericConfig.OpenAPIV3Config.Info.Version = version.Version
 
 	// Configure OpenAPI v2
 	genericConfig.OpenAPIConfig = genericapiserver.DefaultOpenAPIConfig(openapi.GetOpenAPIDefinitions, namer)
-	genericConfig.OpenAPIConfig.Info.Title = "ExampleService"
+	genericConfig.OpenAPIConfig.Info.Title = "Fleet Manager"
 	genericConfig.OpenAPIConfig.Info.Version = version.Version
 
 	if err := o.RecommendedOptions.ApplyTo(genericConfig); err != nil {
 		return nil, fmt.Errorf("failed to apply recommended options: %w", err)
 	}
 
-	serverConfig := &searchapiserver.Config{
+	serverConfig := &fleetapiserver.Config{
 		GenericConfig: genericConfig,
-		ExtraConfig:   searchapiserver.ExtraConfig{},
+		ExtraConfig:   fleetapiserver.ExtraConfig{},
 	}
 
 	return serverConfig, nil
 }
 
 // Run initializes and starts the server.
-func Run(options *ExampleServiceServerOptions, ctx context.Context) error {
+func Run(options *FleetManagerOptions, ctx context.Context) error {
 	if err := logsapi.ValidateAndApply(options.Logs, utilfeature.DefaultMutableFeatureGate); err != nil {
 		return fmt.Errorf("failed to apply logging configuration: %w", err)
 	}
@@ -203,7 +195,7 @@ func Run(options *ExampleServiceServerOptions, ctx context.Context) error {
 
 	defer logs.FlushLogs()
 
-	klog.Info("Starting ExampleService server...")
+	klog.Info("Starting fleet manager server")
 	klog.Info("Metrics available at https://<server-address>/metrics")
 	return server.Run(ctx)
 }

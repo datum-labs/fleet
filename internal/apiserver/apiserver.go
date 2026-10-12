@@ -7,13 +7,10 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
-	"k8s.io/apiserver/pkg/registry/rest"
 	genericapiserver "k8s.io/apiserver/pkg/server"
 	"k8s.io/klog/v2"
 
-	_ "github.com/example-org/example-service/internal/metrics"
-	"github.com/example-org/example-service/pkg/apis/example-service/install"
-	"github.com/example-org/example-service/pkg/apis/example-service/v1alpha1"
+	"go.datum.net/fleet-manager/pkg/apis/fleet-manager/install"
 )
 
 var (
@@ -39,19 +36,19 @@ func init() {
 	)
 }
 
-// ExtraConfig extends the generic apiserver configuration with search-specific settings.
+// ExtraConfig extends the generic apiserver configuration with fleet-manager settings.
 type ExtraConfig struct {
 	// Add custom configuration here as needed
 }
 
-// Config combines generic and search-specific configuration.
+// Config combines generic and fleet-manager-specific configuration.
 type Config struct {
 	GenericConfig *genericapiserver.RecommendedConfig
 	ExtraConfig   ExtraConfig
 }
 
-// ExampleServiceServer is the search aggregated apiserver.
-type ExampleServiceServer struct {
+// FleetManagerServer is the fleet management aggregated API server.
+type FleetManagerServer struct {
 	GenericAPIServer *genericapiserver.GenericAPIServer
 }
 
@@ -76,50 +73,26 @@ func (cfg *Config) Complete() CompletedConfig {
 	return CompletedConfig{&c}
 }
 
-// New creates and initializes the ExampleServiceServer with storage and API groups.
-func (c completedConfig) New() (*ExampleServiceServer, error) {
-	genericServer, err := c.GenericConfig.New("search-apiserver", genericapiserver.NewEmptyDelegate())
+// New creates and initializes the FleetManagerServer.
+func (c completedConfig) New() (*FleetManagerServer, error) {
+	genericServer, err := c.GenericConfig.New("fleet-manager-apiserver", genericapiserver.NewEmptyDelegate())
 	if err != nil {
 		return nil, err
 	}
 
-	s := &ExampleServiceServer{
+	s := &FleetManagerServer{
 		GenericAPIServer: genericServer,
 	}
 
-	apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(v1alpha1.GroupName, Scheme, metav1.ParameterCodec, Codecs)
-
-	v1alpha1Storage := map[string]rest.Storage{}
-
-	// TEMPLATE NOTE: This is where you register your REST storage implementations.
-	// You need to create a storage backend that implements rest.Storage interface.
-	//
-	// Example pattern:
-	//   storage := registry.NewYourResourceStorage(/* backend config */)
-	//   v1alpha1Storage["yourresources"] = storage
-	//
-	// The storage implementation should handle:
-	// - Connecting to your backend (database, API, cache, etc.)
-	// - CRUD operations (Create, Get, List, Update, Delete, Watch)
-	// - Validation and business logic
-	//
-	// See kubernetes sample-apiserver for reference implementations:
-	// https://github.com/kubernetes/sample-apiserver/tree/master/pkg/registry
-	//
-	// TODO: Add your storage implementations here
-
-	apiGroupInfo.VersionedResourcesStorageMap["v1alpha1"] = v1alpha1Storage
-
-	if err := s.GenericAPIServer.InstallAPIGroup(&apiGroupInfo); err != nil {
-		return nil, err
-	}
-
-	klog.Info("ExampleService server initialized successfully")
+	// Install no API group yet. fleet.datumapis.com/v1alpha1 is reserved in the
+	// scheme, but publishing discovery for an empty or speculative resource set
+	// would turn template scaffolding into an accidental API contract.
+	klog.Info("Fleet manager server initialized without resource APIs")
 
 	return s, nil
 }
 
 // Run starts the server.
-func (s *ExampleServiceServer) Run(ctx context.Context) error {
+func (s *FleetManagerServer) Run(ctx context.Context) error {
 	return s.GenericAPIServer.PrepareRun().RunWithContext(ctx)
 }

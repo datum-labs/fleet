@@ -1,11 +1,8 @@
 version: '3'
 
-# TEMPLATE NOTE: Update these variables for your service:
-# - IMAGE_NAME: Change to your container registry and image name
-# - Update all references to "example-service" throughout this file
 vars:
   TOOL_DIR: "{{.USER_WORKING_DIR}}/bin"
-  IMAGE_NAME: "ghcr.io/example-org/example-service"  # TEMPLATE: Change to your registry/image
+  IMAGE_NAME: "ghcr.io/datum-labs/fleet-manager"
   IMAGE_TAG: "dev"
 
 tasks:
@@ -17,12 +14,11 @@ tasks:
 
   # Build tasks
   build:
-    desc: Build the search binary
-    # TEMPLATE NOTE: Update the ldflags to use your module path
+    desc: Build the fleet-manager binary
     cmds:
       - |
         set -e
-        echo "Building example-service..."
+        echo "Building fleet-manager..."
         mkdir -p {{.TOOL_DIR}}
 
         # Get git information for version injection
@@ -36,24 +32,23 @@ tasks:
 
         echo "Version: ${VERSION}, Commit: ${GIT_COMMIT:0:7}, Tree: ${GIT_TREE_STATE}"
 
-        # TEMPLATE: Update module path and binary name
         go build \
-          -ldflags="-X 'github.com/example-org/example-service/internal/version.Version=${VERSION}' \
-                    -X 'github.com/example-org/example-service/internal/version.GitCommit=${GIT_COMMIT}' \
-                    -X 'github.com/example-org/example-service/internal/version.GitTreeState=${GIT_TREE_STATE}' \
-                    -X 'github.com/example-org/example-service/internal/version.BuildDate=${BUILD_DATE}'" \
-          -o {{.TOOL_DIR}}/example-service ./cmd/example-service
-        echo "✅ Binary built: {{.TOOL_DIR}}/example-service"
+          -ldflags="-X 'go.datum.net/fleet-manager/internal/version.Version=${VERSION}' \
+                    -X 'go.datum.net/fleet-manager/internal/version.GitCommit=${GIT_COMMIT}' \
+                    -X 'go.datum.net/fleet-manager/internal/version.GitTreeState=${GIT_TREE_STATE}' \
+                    -X 'go.datum.net/fleet-manager/internal/version.BuildDate=${BUILD_DATE}'" \
+          -o {{.TOOL_DIR}}/fleet-manager ./cmd/fleet-manager
+        echo "✅ Binary built: {{.TOOL_DIR}}/fleet-manager"
     silent: true
 
   # Development tasks
   dev:build:
-    desc: Build the Search server container image for development
+    desc: Build the fleet-manager container image for development
     silent: true
     cmds:
       - |
         set -e
-        echo "Building Search server container image: {{.IMAGE_NAME}}:{{.IMAGE_TAG}}"
+        echo "Building fleet-manager container image: {{.IMAGE_NAME}}:{{.IMAGE_TAG}}"
 
         # Get git information for version injection
         GIT_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
@@ -88,8 +83,8 @@ tasks:
         go run k8s.io/code-generator/cmd/deepcopy-gen \
           --go-header-file hack/boilerplate.go.txt \
           --output-file zz_generated.deepcopy.go \
-          --bounding-dirs github.com/example-org/example-service/pkg/apis \
-          github.com/example-org/example-service/pkg/apis/example-service/v1alpha1
+          --bounding-dirs go.datum.net/fleet-manager/pkg/apis \
+          go.datum.net/fleet-manager/pkg/apis/fleet-manager/v1alpha1
 
         echo "✅ Code generation complete"
     silent: true
