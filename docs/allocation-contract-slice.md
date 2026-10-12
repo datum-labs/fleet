@@ -5,6 +5,9 @@ This initial contract package turns the settled lifecycle invariants in
 into reviewable Go contracts at `pkg/contracts/v1alpha1`. These types are not
 served yet; CRD schemas, admission, and controllers are required before a client
 can create these resources. See [API serving approach](api-serving-decision.md).
+The [first API proposal](first-api-proposal.md) recommends narrowing the served
+Claim schema and using native Kubernetes identity instead of some duplicated
+UID fields in these exploratory types.
 
 ## Scope
 

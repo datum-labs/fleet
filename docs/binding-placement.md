@@ -29,16 +29,17 @@ protocol below is therefore required before enabling allocation.
    records. If either side is unavailable or disagrees, permit no new physical
    effects and retain or quarantine the Machine.
 
-The exact CRD scope within the consumer Project, admission rules, reference
-shape, and conditional-update implementation remain to be specified. No
-cross-project Kubernetes owner reference is used.
+The [first API proposal](first-api-proposal.md) recommends a namespaced
+Binding beside the Claim, service-only admission, and a conditional update of
+the provider Machine. No cross-project Kubernetes owner reference is used.
 
 ## Release and Project deletion
 
-Release stops new effects, revokes access, completes cleanup, removes the Milo
-quota claim, and only then clears the provider Machine reservation. The binding
-is deleted last. Finalizers on the claim and binding keep them available while
-release is incomplete.
+Release stops new effects, revokes access, and completes cleanup. Fleet then
+clears the matching provider Machine reservation and observes that update
+before deleting the Milo quota claim. The binding is deleted last. Finalizers
+on the MachineClaim, Binding, and quota claim keep them available while release
+is incomplete.
 
 Consumer Project finalization must wait for its active bindings to release.
 If the Project control plane or binding is lost despite that guard, the provider

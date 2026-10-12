@@ -8,7 +8,7 @@ binding record does not duplicate the Milo `ResourceClaim` UID.
 
 The initial quota resource should be a count of allocated machines, consumed by
 the customer Project: one granted unit per bound `MachineClaim`. Register a
-resource type such as `fleet.datumapis.com/machines` with `MachineClaim` as an
+resource type such as `fleet.datumapis.com/machines` with `MachineBinding` as an
 allowed claiming resource. Class-specific or CPU/memory quota can be added only
 when there is a product requirement and a migration plan for existing grants.
 
@@ -16,11 +16,12 @@ when there is a product requirement and a migration plan for existing grants.
 
 1. Validate the consumer's authenticated Project, class provenance and current
    source-use permission, location, network feasibility, and candidate Machine.
-2. Create or recover a deterministically named Milo quota `ResourceClaim` in
-   the consumer Project's quota control plane. Set `resourceRef` to the Fleet
-   `MachineClaim`. Derive the name from the Fleet claim's immutable identity so
-   a reused object name cannot inherit an earlier quota claim. Only the Fleet
-   service identity may manage this Milo claim.
+2. Create or recover a protected `MachineBinding` beside the consumer
+   `MachineClaim`, then a deterministically named Milo quota `ResourceClaim` in
+   that Project. Set `resourceRef` to the Binding and `consumerRef` to the
+   Project. Derive both names from the Claim's immutable identity so a reused
+   object name cannot inherit an earlier quota claim. Only Fleet may manage
+   these records.
 3. Resolve that Milo claim by its derived name and wait for `Granted=True` for
    its current generation. Verify its `resourceRef` and requested resources on
    every reconciliation. `Pending` or an unavailable quota service leaves the
@@ -35,19 +36,22 @@ when there is a product requirement and a migration plan for existing grants.
    release path, never silently permit a new consumer to use the Machine.
 
 This sequence claims quota at allocation time, not when a customer first creates
-a potentially long-pending `MachineClaim`. Milo's `ClaimCreationPolicy` can
-create quota claims at API admission, but using it for the first Fleet release
-would charge requests that have not received a Machine. Fleet should instead
-create the Milo `ResourceClaim` as part of binding and treat its status as the
-gate. The exact claim name, quota namespace, IAM role, and resource type must be
-validated against Milo before serving the API.
+a potentially long-pending `MachineClaim`. A `ClaimCreationPolicy` on Binding
+creation could also charge at bind time, but current Service Catalog policy
+generation uses a fresh generated quota-claim name per admission attempt.
+Fleet should explicitly create a deterministic Milo `ResourceClaim` and treat
+its status as the gate. The [first API proposal](first-api-proposal.md) documents
+the required Service Catalog registration change. The exact claim name, quota
+namespace, IAM role, and resource type must be validated before serving the API.
 
 ## Release and recovery
 
 The Fleet binder retains its Machine reservation while it revokes access,
 detaches or fences networking, and completes the owner's cleanup policy. Once
-the Machine is safe to reuse, Fleet deletes the Milo quota `ResourceClaim` and
-records its deletion before it marks the binding released. If Milo is
+the Machine is safe to reuse, Fleet clears and observes its matching provider
+reservation, then deletes the Milo quota `ResourceClaim` and records its
+deletion before it marks the binding released. The ResourceClaim carries a
+Fleet finalizer so Project purge cannot release quota before cleanup. If Milo is
 unavailable, release stays retryable; Fleet derives the quota claim name from
 its retained claim identity and consumer Project identity. Project deletion
 must wait for the protected binding and Milo quota claim to release. If the
@@ -65,7 +69,7 @@ Milo remains the quota authority.
 
 ## Validation before allocation is enabled
 
-- Register the resource type, Project consumer, and `MachineClaim` claiming kind;
+- Register the resource type, Project consumer, and `MachineBinding` claiming kind;
   verify grants are provisioned in two consumer projects.
 - Race claims from two projects for one eligible Machine. At most one Fleet
   binding succeeds, and the losing Milo quota claim is removed.

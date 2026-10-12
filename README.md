@@ -21,6 +21,8 @@ resources and is not the selected serving path for these first APIs.
 Read the [proposal investigation](docs/proposal-investigation.md) for the full
 service design and open decisions, and the [first contract slice](docs/allocation-contract-slice.md)
 for the exact scope of the initial Go types.
+The [first API proposal](docs/first-api-proposal.md) recommends the CRD schemas,
+binding and quota sequence, controller rollout, and allocation acceptance gates.
 
 Fleet uses [Milo quota](docs/quota-integration.md) for machine allocations.
 The protected [binding record](docs/binding-placement.md) lives in the
