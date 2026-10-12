@@ -114,21 +114,18 @@ type Condition struct {
 // BindingRecord is protected service state, deliberately separate from public
 // MachineClaim status and retained outside the consumer project's deletion domain.
 type BindingRecord struct {
-	ID                        string     `json:"id"`
-	Epoch                     uint64     `json:"epoch"`
-	ConsumerProjectUID        ProjectUID `json:"consumerProjectUID"`
-	ClaimUID                  UID        `json:"claimUID"`
-	LocalMachineClassUID      UID        `json:"localMachineClassUID"`
-	ProviderProjectUID        ProjectUID `json:"providerProjectUID"`
-	CanonicalMachineClassUID  UID        `json:"canonicalMachineClassUID"`
-	CanonicalClassDigest      string     `json:"canonicalClassDigest"`
-	MachineUID                UID        `json:"machineUID"`
-	AuthorizationPolicyDigest string     `json:"authorizationPolicyDigest"`
-	// MiloQuotaClaimUID identifies the granted quota ResourceClaim that gates
-	// this allocation. Fleet does not keep an independent quota ledger.
-	MiloQuotaClaimUID  UID          `json:"miloQuotaClaimUID"`
-	Phase              BindingPhase `json:"phase"`
-	ReleaseObligations []string     `json:"releaseObligations,omitempty"`
+	ID                        string       `json:"id"`
+	Epoch                     uint64       `json:"epoch"`
+	ConsumerProjectUID        ProjectUID   `json:"consumerProjectUID"`
+	ClaimUID                  UID          `json:"claimUID"`
+	LocalMachineClassUID      UID          `json:"localMachineClassUID"`
+	ProviderProjectUID        ProjectUID   `json:"providerProjectUID"`
+	CanonicalMachineClassUID  UID          `json:"canonicalMachineClassUID"`
+	CanonicalClassDigest      string       `json:"canonicalClassDigest"`
+	MachineUID                UID          `json:"machineUID"`
+	AuthorizationPolicyDigest string       `json:"authorizationPolicyDigest"`
+	Phase                     BindingPhase `json:"phase"`
+	ReleaseObligations        []string     `json:"releaseObligations,omitempty"`
 }
 
 type BindingPhase string

@@ -13,16 +13,17 @@ The slice covers:
 - mutually exclusive provider-definition and consumer-reference MachineClass modes;
 - immutable one-hop source identity and explicitly namespaced provider supply;
 - local MachineClaim inputs, immutable binding constraints, and mutable power intent;
-- protected BindingRecord identity using Project, class, claim, Machine, and
-  Milo quota ResourceClaim UIDs rather than names;
+- protected BindingRecord identity using Project, class, claim, and Machine
+  UIDs rather than names;
 - immutable Installation input and UID-fenced reinstall predecessors;
 - conditions correlated to generation, binding epoch, and resolved input digest;
 - protected InstallationPlan authority persisted before external effects; and
 - release obligations that keep the binding and Milo quota claim until cleanup succeeds.
 
 The public resources contain local name references only. Foreign provider identity,
-the Machine UID, authorization evidence, Milo quota claim, and cleanup obligations are
-kept in protected service records. A source project name is only a lookup address;
+the Machine UID, authorization evidence, and cleanup obligations are kept in
+protected service records. Fleet resolves its Milo quota claim when reconciling
+the binding. A source project name is only a lookup address;
 it never proves permission.
 
 ## Deliberately unresolved

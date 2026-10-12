@@ -23,8 +23,7 @@ Read the [proposal investigation](docs/proposal-investigation.md) for the full
 service design and open decisions, and the [first contract slice](docs/allocation-contract-slice.md)
 for the exact scope of the initial Go types.
 
-Fleet uses [Milo quota](docs/quota-integration.md) for machine allocations;
-the Fleet binding record stores the granted Milo ResourceClaim UID.
+Fleet uses [Milo quota](docs/quota-integration.md) for machine allocations.
 
 ## Development
 

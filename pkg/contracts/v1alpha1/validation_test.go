@@ -69,7 +69,7 @@ func TestInstallationUpdateUsesSemanticEquality(t *testing.T) {
 }
 
 func TestReleaseRetainsReservationUntilObligationsClear(t *testing.T) {
-	b := BindingRecord{Phase: BindingReleasing, MiloQuotaClaimUID: "quota-claim-uid", ReleaseObligations: []string{"network-detach", "disk-clean"}}
+	b := BindingRecord{Phase: BindingReleasing, ReleaseObligations: []string{"network-detach", "disk-clean"}}
 	if b.CanRelease() == nil {
 		t.Fatal("unclean asset must remain reserved")
 	}
@@ -77,24 +77,16 @@ func TestReleaseRetainsReservationUntilObligationsClear(t *testing.T) {
 	if err := b.CanRelease(); err != nil {
 		t.Fatal(err)
 	}
-	b.MiloQuotaClaimUID = ""
-	if b.CanRelease() == nil {
-		t.Fatal("release must retain the Milo quota claim identity")
-	}
 }
 
 func TestBindingIdentityUsesUIDsAcrossOrWithinProjects(t *testing.T) {
-	b := BindingRecord{ID: "binding-1", Epoch: 1, ConsumerProjectUID: "consumer-uid", ClaimUID: "claim-uid", LocalMachineClassUID: "local-class-uid", ProviderProjectUID: "provider-uid", CanonicalMachineClassUID: "source-class-uid", MachineUID: "machine-uid", MiloQuotaClaimUID: "quota-claim-uid"}
+	b := BindingRecord{ID: "binding-1", Epoch: 1, ConsumerProjectUID: "consumer-uid", ClaimUID: "claim-uid", LocalMachineClassUID: "local-class-uid", ProviderProjectUID: "provider-uid", CanonicalMachineClassUID: "source-class-uid", MachineUID: "machine-uid"}
 	if err := b.ValidateIdentity(); err != nil {
 		t.Fatal(err)
 	}
 	b.ProviderProjectUID = b.ConsumerProjectUID
 	if err := b.ValidateIdentity(); err != nil {
 		t.Fatalf("definitions may serve claims in their own project: %v", err)
-	}
-	b.MiloQuotaClaimUID = ""
-	if b.ValidateIdentity() == nil {
-		t.Fatal("binding without a Milo quota grant identity must fail")
 	}
 }
 
