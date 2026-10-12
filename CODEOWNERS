@@ -1,0 +1,17 @@
+# Code owners for this service.
+#
+# REPLACE THE OWNER BELOW before this repository takes its first real change.
+#
+# @datum-cloud/engineering is every engineer in the organization. Leaving it in
+# place requests review from all of them, which in practice assigns it to no
+# one. It is here so a new repository starts covered rather than silent — it is
+# not a correct answer.
+#
+# Name the team that actually reviews this service. That team needs write access
+# to the repository: GitHub skips automatic review requests from teams with
+# read-only access, without reporting an error.
+#
+# Split by path where different teams own different trees. GitHub applies the
+# LAST matching rule, so keep the catch-all first.
+
+* @datum-cloud/engineering
