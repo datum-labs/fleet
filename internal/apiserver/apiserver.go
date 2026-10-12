@@ -10,7 +10,7 @@ import (
 	genericapiserver "k8s.io/apiserver/pkg/server"
 	"k8s.io/klog/v2"
 
-	"go.datum.net/fleet-manager/pkg/apis/fleet-manager/install"
+	"go.datum.net/fleet/pkg/apis/fleet/install"
 )
 
 var (
@@ -36,19 +36,19 @@ func init() {
 	)
 }
 
-// ExtraConfig extends the generic apiserver configuration with fleet-manager settings.
+// ExtraConfig extends the generic apiserver configuration with fleet settings.
 type ExtraConfig struct {
 	// Add custom configuration here as needed
 }
 
-// Config combines generic and fleet-manager-specific configuration.
+// Config combines generic and fleet-specific configuration.
 type Config struct {
 	GenericConfig *genericapiserver.RecommendedConfig
 	ExtraConfig   ExtraConfig
 }
 
-// FleetManagerServer is the fleet management aggregated API server.
-type FleetManagerServer struct {
+// FleetServer is the fleet management aggregated API server.
+type FleetServer struct {
 	GenericAPIServer *genericapiserver.GenericAPIServer
 }
 
@@ -73,14 +73,14 @@ func (cfg *Config) Complete() CompletedConfig {
 	return CompletedConfig{&c}
 }
 
-// New creates and initializes the FleetManagerServer.
-func (c completedConfig) New() (*FleetManagerServer, error) {
-	genericServer, err := c.GenericConfig.New("fleet-manager-apiserver", genericapiserver.NewEmptyDelegate())
+// New creates and initializes the FleetServer.
+func (c completedConfig) New() (*FleetServer, error) {
+	genericServer, err := c.GenericConfig.New("fleet-apiserver", genericapiserver.NewEmptyDelegate())
 	if err != nil {
 		return nil, err
 	}
 
-	s := &FleetManagerServer{
+	s := &FleetServer{
 		GenericAPIServer: genericServer,
 	}
 
@@ -93,6 +93,6 @@ func (c completedConfig) New() (*FleetManagerServer, error) {
 }
 
 // Run starts the server.
-func (s *FleetManagerServer) Run(ctx context.Context) error {
+func (s *FleetServer) Run(ctx context.Context) error {
 	return s.GenericAPIServer.PrepareRun().RunWithContext(ctx)
 }

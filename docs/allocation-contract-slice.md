@@ -2,7 +2,7 @@
 
 This initial contract package turns the settled lifecycle invariants in
 `datum-cloud/infra#5782` at commit `51781e2456367be82281e1443ca56d0686311133`
-into reviewable Go contracts at `pkg/apis/fleet/v1alpha1`. These types are not
+into reviewable Go contracts at `pkg/contracts/v1alpha1`. These types are not
 served by the aggregated API server yet; storage, admission, and API machinery
 integration are required before a client can create these resources.
 
@@ -55,7 +55,7 @@ does not silently choose them:
 Run:
 
 ```sh
-go test ./pkg/apis/fleet/v1alpha1
+go test ./pkg/contracts/v1alpha1
 ```
 
 The tests exercise mode exclusivity, source retarget rejection, bound-claim

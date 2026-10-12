@@ -3,4 +3,4 @@ kind: Component
 
 resources:
   # ServiceMonitors for metrics collection
-  - servicemonitors/fleet-manager-apiserver-servicemonitor.yaml
+  - servicemonitors/fleet-apiserver-servicemonitor.yaml

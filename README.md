@@ -1,6 +1,6 @@
-# Fleet Manager
+# Fleet
 
-Fleet Manager is an incubating Datum service for managing machine fleets and
+Fleet is an incubating Datum service for managing machine fleets and
 their lifecycle through Kubernetes-style APIs.
 
 The repository currently contains the service and deployment scaffold. The API
@@ -11,10 +11,10 @@ contract.
 
 ## Repository layout
 
-- `cmd/fleet-manager`: service entry point and command-line options
+- `cmd/fleet`: service entry point and command-line options
 - `internal/apiserver`: Kubernetes aggregated API server setup
-- `pkg/apis/fleet-manager`: API group registration
-- `pkg/apis/fleet/v1alpha1`: proposed allocation and installation contracts,
+- `pkg/apis/fleet`: API group registration
+- `pkg/contracts/v1alpha1`: proposed allocation and installation contracts,
   with validation tests; these types are not served yet
 - `config`: Kustomize base and optional deployment components
 - `.github/workflows`: tests and release artifact publishing
@@ -45,7 +45,7 @@ Build the development image:
 task dev:build
 ```
 
-The image is `ghcr.io/datum-labs/fleet-manager`. See
+The image is `ghcr.io/datum-labs/fleet`. See
 [`config/README.md`](config/README.md) for the deployment manifests and their
 current limitations.
 
@@ -56,5 +56,5 @@ are being developed. It is not a production service yet.
 
 ## License
 
-Fleet Manager is licensed under the GNU Affero General Public License v3.0. See
+Fleet is licensed under the GNU Affero General Public License v3.0. See
 [`LICENSE`](LICENSE).

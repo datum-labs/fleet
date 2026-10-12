@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fleet-manager-apiserver
+  name: fleet-apiserver
 spec:
   template:
     spec:

@@ -1,4 +1,4 @@
-module go.datum.net/fleet-manager
+module go.datum.net/fleet
 
 go 1.26.0
 

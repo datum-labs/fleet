@@ -14,15 +14,15 @@ labels:
   - includeSelectors: true
     includeTemplates: true
     pairs:
-      app.kubernetes.io/name: fleet-manager
-      app.kubernetes.io/instance: fleet-manager-apiserver
+      app.kubernetes.io/name: fleet
+      app.kubernetes.io/instance: fleet-apiserver
       app.kubernetes.io/component: apiserver
       app.kubernetes.io/part-of: fleet.datumapis.com
       app.kubernetes.io/managed-by: kustomize
 
 # Images (will be replaced by overlays for different environments)
 images:
-  - name: ghcr.io/datum-labs/fleet-manager
+  - name: ghcr.io/datum-labs/fleet
     newTag: latest
 
 # JSON patches to ensure rbac-auth-reader stays in kube-system
@@ -30,7 +30,7 @@ images:
 patches:
   - target:
       kind: RoleBinding
-      name: fleet-manager-apiserver-auth-reader
+      name: fleet-apiserver-auth-reader
     patch: |-
       - op: replace
         path: /metadata/namespace

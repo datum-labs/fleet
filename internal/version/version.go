@@ -1,4 +1,4 @@
-// Package version provides version information for the Fleet Manager API server.
+// Package version provides version information for the Fleet API server.
 // Version information is injected at build time using ldflags.
 package version
 
@@ -8,24 +8,24 @@ import (
 )
 
 var (
-	// Version is the semantic version of the Fleet Manager API server.
+	// Version is the semantic version of the Fleet API server.
 	// This can be set via ldflags during build:
-	//   -ldflags="-X 'go.datum.net/fleet-manager/internal/version.Version=v0.1.0'"
+	//   -ldflags="-X 'go.datum.net/fleet/internal/version.Version=v0.1.0'"
 	Version = "dev"
 
 	// GitCommit is the git commit hash of the build
 	// This can be set via ldflags during build:
-	//   -ldflags="-X 'go.datum.net/fleet-manager/internal/version.GitCommit=$(git rev-parse HEAD)'"
+	//   -ldflags="-X 'go.datum.net/fleet/internal/version.GitCommit=$(git rev-parse HEAD)'"
 	GitCommit = "unknown"
 
 	// GitTreeState indicates whether the git tree was clean or dirty during build
 	// This can be set via ldflags during build:
-	//   -ldflags="-X 'go.datum.net/fleet-manager/internal/version.GitTreeState=clean'"
+	//   -ldflags="-X 'go.datum.net/fleet/internal/version.GitTreeState=clean'"
 	GitTreeState = "unknown"
 
 	// BuildDate is the date when the binary was built (RFC3339 format)
 	// This can be set via ldflags during build:
-	//   -ldflags="-X 'go.datum.net/fleet-manager/internal/version.BuildDate=$(date -u '+%Y-%m-%dT%H:%M:%SZ')'"
+	//   -ldflags="-X 'go.datum.net/fleet/internal/version.BuildDate=$(date -u '+%Y-%m-%dT%H:%M:%SZ')'"
 	BuildDate = "unknown"
 )
 
@@ -55,6 +55,6 @@ func Get() Info {
 
 // String returns a human-readable version string
 func (i Info) String() string {
-	return fmt.Sprintf("Fleet Manager API Server %s (commit: %s, built: %s, go: %s, platform: %s)",
+	return fmt.Sprintf("Fleet API Server %s (commit: %s, built: %s, go: %s, platform: %s)",
 		i.Version, i.GitCommit, i.BuildDate, i.GoVersion, i.Platform)
 }

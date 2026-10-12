@@ -22,7 +22,7 @@ jobs:
       attestations: write
     uses: datum-cloud/actions/.github/workflows/publish-docker.yaml@v1.22.0
     with:
-      image-name: fleet-manager
+      image-name: fleet
       registry-organization: datum-labs
     secrets: inherit
 
@@ -39,8 +39,8 @@ jobs:
       packages: write
     uses: datum-cloud/actions/.github/workflows/publish-kustomize-bundle.yaml@v1.22.0
     with:
-      bundle-name: ghcr.io/datum-labs/fleet-manager-kustomize
+      bundle-name: ghcr.io/datum-labs/fleet-kustomize
       bundle-path: config
       image-overlays: config/base
-      image-name: ghcr.io/datum-labs/fleet-manager
+      image-name: ghcr.io/datum-labs/fleet
     secrets: inherit

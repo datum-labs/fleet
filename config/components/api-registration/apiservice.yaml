@@ -4,7 +4,7 @@ metadata:
   name: v1alpha1.fleet.datumapis.com
 spec:
   service:
-    name: fleet-manager-apiserver
+    name: fleet-apiserver
     port: 443
   group: fleet.datumapis.com
   version: v1alpha1

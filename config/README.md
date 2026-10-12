@@ -1,6 +1,6 @@
 # Deployment configuration
 
-This directory contains Kustomize manifests for the Fleet Manager aggregated
+This directory contains Kustomize manifests for the Fleet aggregated
 API server.
 
 ## Development overlay
@@ -12,9 +12,9 @@ kubectl kustomize config/overlays/dev
 ```
 
 The overlay creates `fleet-system`, deploys
-`ghcr.io/datum-labs/fleet-manager`, configures a cert-manager CA, and adds the
+`ghcr.io/datum-labs/fleet`, configures a cert-manager CA, and adds the
 observability and tracing components. It intentionally does not install the
-`APIService` component because Fleet Manager does not publish a resource API
+`APIService` component because Fleet does not publish a resource API
 yet.
 
 Once the first `fleet.datumapis.com/v1alpha1` resources and their storage are
@@ -38,6 +38,6 @@ development defaults before deploying outside an isolated environment.
 
 ```bash
 kubectl get pods -n fleet-system
-kubectl logs -n fleet-system -l app=fleet-manager-apiserver --tail=50
+kubectl logs -n fleet-system -l app=fleet-apiserver --tail=50
 kubectl get events -n fleet-system --sort-by=.lastTimestamp
 ```

@@ -6,7 +6,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
-// GroupName is the API group reserved for fleet-manager resources.
+// GroupName is the API group reserved for fleet resources.
 const GroupName = "fleet.datumapis.com"
 
 // SchemeGroupVersion is group version used to register these objects
