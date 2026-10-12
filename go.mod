@@ -1,4 +1,4 @@
-module github.com/example-org/example-service
+module go.datum.net/fleet
 
 go 1.26.0
 
