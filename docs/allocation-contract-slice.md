@@ -1,10 +1,10 @@
 # Fleet API contract slice
 
-This initial contract package turns the settled lifecycle invariants in
+The exploratory contract package turns the settled lifecycle invariants in
 `datum-cloud/infra#5782` at commit `51781e2456367be82281e1443ca56d0686311133`
-into reviewable Go contracts at `pkg/contracts/v1alpha1`. These types are not
-served yet; CRD schemas, admission, and controllers are required before a client
-can create these resources. See [API serving approach](api-serving-decision.md).
+into reviewable models at `pkg/contracts/v1alpha1`. The narrower first public
+API is now implemented at `pkg/apis/fleet/v1alpha1` and `config/crd`; these older
+models remain design evidence for later allocation and installation slices.
 The [first API proposal](first-api-proposal.md) recommends narrowing the served
 Claim schema and using native Kubernetes identity instead of some duplicated
 UID fields in these exploratory types.

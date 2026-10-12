@@ -4,6 +4,11 @@ Status: proposed for review. This refines the agreed public API group, CRD
 serving approach, consumer-Project binding placement, and Milo quota decision.
 It does not enable allocation or physical effects.
 
+Implementation note: the API slice in this repository installs the three public
+CRDs and Go types only. Allocation remains disabled. Before the allocation slice,
+Service Catalog must support `claimingResources` without generating an automatic
+`ClaimCreationPolicy`, as described below.
+
 ## Recommendation
 
 Build the first public APIs as standard CRDs in `fleet.datumapis.com/v1alpha1`.

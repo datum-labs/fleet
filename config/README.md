@@ -1,9 +1,17 @@
 # Deployment configuration
 
-This directory contains a non-serving Kustomize scaffold for an aggregated API
-server. The first public Fleet APIs are expected to use standard CRDs; see the
-[API serving decision](../docs/api-serving-decision.md). Do not deploy this
-scaffold as the first Fleet API implementation.
+The supported first API artifact is the standard CRD Kustomization in `crd`.
+It installs `MachineClass`, `Machine`, and `MachineClaim` in
+`fleet.datumapis.com/v1alpha1`:
+
+```bash
+kubectl apply -k config/crd
+```
+
+There is deliberately no `APIService` for this group/version. The legacy
+aggregated-server deployment under `base` is retained only while the service
+entry point is replaced by a controller manager; it is not part of the public
+API serving path.
 
 ## Development overlay
 
@@ -16,17 +24,16 @@ kubectl kustomize config/overlays/dev
 The overlay creates `fleet-system`, deploys
 `ghcr.io/datum-labs/fleet`, configures a cert-manager CA, and adds the
 observability and tracing components. It intentionally does not install the
-`APIService` component because Fleet does not publish a resource API
-yet.
+removed `APIService` component. Install the public CRDs separately with the
+command above.
 
-The `api-registration` component is retained from the scaffold and is not part
-of the CRD deployment path. An APIService registration would claim the entire
-`fleet.datumapis.com/v1alpha1` path, which the CRDs need to own.
+The development overlay still exercises the legacy process and its operational
+components. Installing the CRDs is independent of that process.
 
 ## Components
 
 - `namespace`: creates `fleet-system`
-- `api-registration`: unused aggregated-server registration scaffold
+- `crd`: public Fleet CRDs
 - `cert-manager-ca`: provisions the serving certificate CA
 - `observability`: adds a Prometheus `ServiceMonitor`
 - `tracing`: supplies the Kubernetes API server tracing configuration

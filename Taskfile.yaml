@@ -71,20 +71,25 @@ tasks:
 
   # Code generation tasks
   generate:
-    desc: Generate deepcopy and client code
-    # TEMPLATE NOTE: Update the package path to match your module and API group
+    desc: Generate deepcopy and typed client code
     cmds:
       - |
         set -e
         echo "Generating code..."
 
-        # Run deepcopy code generator
-        # TEMPLATE: Update module path and API package name
         go run k8s.io/code-generator/cmd/deepcopy-gen \
           --go-header-file hack/boilerplate.go.txt \
           --output-file zz_generated.deepcopy.go \
           --bounding-dirs go.datum.net/fleet/pkg/apis \
           go.datum.net/fleet/pkg/apis/fleet/v1alpha1
+
+        go run k8s.io/code-generator/cmd/client-gen \
+          --go-header-file hack/boilerplate.go.txt \
+          --input-base go.datum.net/fleet/pkg/apis \
+          --input fleet/v1alpha1 \
+          --output-dir pkg/generated/clientset \
+          --output-pkg go.datum.net/fleet/pkg/generated/clientset \
+          --clientset-name versioned
 
         echo "✅ Code generation complete"
     silent: true

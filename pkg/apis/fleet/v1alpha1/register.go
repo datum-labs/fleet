@@ -24,10 +24,15 @@ func Resource(resource string) schema.GroupResource {
 	return SchemeGroupVersion.WithResource(resource).GroupResource()
 }
 
-// addKnownTypes registers the group version. Resource types will be added once
-// the initial API contract is accepted; the service must not advertise template
-// resources as if they were part of the fleet API.
 func addKnownTypes(scheme *runtime.Scheme) error {
+	scheme.AddKnownTypes(SchemeGroupVersion,
+		&MachineClass{},
+		&MachineClassList{},
+		&Machine{},
+		&MachineList{},
+		&MachineClaim{},
+		&MachineClaimList{},
+	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
 }

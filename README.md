@@ -3,19 +3,20 @@
 Fleet is an incubating Datum service for managing machine fleets and
 their lifecycle through Kubernetes-style APIs.
 
-The repository currently contains a non-serving API server scaffold and draft
-contracts. [Standard CRDs are the recommended starting point](docs/api-serving-decision.md)
-for MachineClass, Machine, and MachineClaim. The server scaffold publishes no
-resources and is not the selected serving path for these first APIs.
+The repository serves its first public contracts as [standard
+CRDs](docs/api-serving-decision.md) for MachineClass, Machine, and MachineClaim.
+The inherited aggregated server publishes no resources and is being retired;
+no `APIService` claims the public group/version.
 
 ## Repository layout
 
 - `cmd/fleet`: service entry point and command-line options
 - `internal/apiserver`: unused aggregated API server scaffold
-- `pkg/apis/fleet`: API group registration
+- `pkg/apis/fleet`: public Kubernetes API types and scheme registration
 - `pkg/contracts/v1alpha1`: proposed allocation and installation contracts,
   with validation tests; these types are not served yet
-- `config`: Kustomize base and optional deployment components
+- `config/crd`: installable public CRDs
+- `config/base`: legacy non-serving process deployment during controller migration
 - `.github/workflows`: tests and release artifact publishing
 
 Read the [proposal investigation](docs/proposal-investigation.md) for the full
@@ -35,6 +36,12 @@ Requirements:
 - Go 1.26 or later
 - [Task](https://taskfile.dev) for the convenience commands
 - Docker for building the container image
+
+Install the API definitions:
+
+```bash
+kubectl apply -k config/crd
+```
 
 Run the local checks:
 
