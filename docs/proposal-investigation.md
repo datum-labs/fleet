@@ -31,6 +31,10 @@ Primary proposal sources:
 - [Operating-system configuration](https://github.com/datum-cloud/infra/blob/51781e2456367be82281e1443ca56d0686311133/docs/enhancements/fleet-management/os-configuration.md)
 - [Cluster lifecycle](https://github.com/datum-cloud/infra/blob/51781e2456367be82281e1443ca56d0686311133/docs/enhancements/fleet-management/cluster-lifecycle.md)
 
+This report records the draft proposal as written. The implementation decision
+to place the protected binding in the consumer Project is documented separately
+in [binding placement](binding-placement.md).
+
 ## API inventory
 
 The proposal uses Kubernetes-style APIs served through Milo. It proposes CRD-like

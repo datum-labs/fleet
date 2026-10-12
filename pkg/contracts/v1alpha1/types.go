@@ -111,8 +111,8 @@ type Condition struct {
 	InputDigest  string `json:"inputDigest,omitempty"`
 }
 
-// BindingRecord is protected service state, deliberately separate from public
-// MachineClaim status and retained outside the consumer project's deletion domain.
+// BindingRecord is protected service state in the consumer Project, deliberately
+// separate from public MachineClaim status and writable only by Fleet.
 type BindingRecord struct {
 	ID                        string       `json:"id"`
 	Epoch                     uint64       `json:"epoch"`

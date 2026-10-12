@@ -50,16 +50,18 @@ the Machine is safe to reuse, Fleet deletes the Milo quota `ResourceClaim` and
 records its deletion before it marks the binding released. If Milo is
 unavailable, release stays retryable; Fleet derives the quota claim name from
 its retained claim identity and consumer Project identity. Project deletion
-needs a service-owned cleanup route and a retained project identity tombstone
-so quota reconciliation does not depend on a surviving consumer `MachineClaim`
-or owner reference.
+must wait for the protected binding and Milo quota claim to release. If the
+consumer control plane disappears unexpectedly, the provider Machine remains
+reserved or quarantined until recovery or explicit operator action; a missing
+claim is not proof of quota release or clean hardware. See
+[binding placement](binding-placement.md).
 
 This order deliberately avoids freeing physical capacity while an earlier
 consumer can still access it. Milo quota usage and Fleet's physical reservation
 may temporarily diverge during failure or cleanup; the reconciler must detect,
-repair, and alert on that divergence. The Fleet binding store remains the
-authority for exclusive Machine ownership, while Milo remains the quota
-authority.
+repair, and alert on that divergence. The consumer Project binding authorizes
+the allocation, the provider Machine reservation prevents concurrent use, and
+Milo remains the quota authority.
 
 ## Validation before allocation is enabled
 

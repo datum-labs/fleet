@@ -23,6 +23,8 @@ service design and open decisions, and the [first contract slice](docs/allocatio
 for the exact scope of the initial Go types.
 
 Fleet uses [Milo quota](docs/quota-integration.md) for machine allocations.
+The protected [binding record](docs/binding-placement.md) lives in the
+consumer Project with its MachineClaim.
 
 ## Development
 

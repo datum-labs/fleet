@@ -26,12 +26,11 @@ subset of the CRDs in that same path.
 - A Fleet controller resolves cross-project references and checks current
   permission and Milo quota before binding. It never treats a copied class or
   object name as proof of authorization.
-- Fleet needs service-owned, durable allocation and operation records outside
-  the consumer project's deletion domain. A protected CRD in an independent
-  control plane may be sufficient for the initial unique Machine reservation if
-  its create/update conflict behavior, retention, recovery, and effect fencing
-  are proven. A transactional store remains an option if those guarantees cannot
-  be met with CRDs. Public claim status alone is insufficient.
+- The protected [binding record](binding-placement.md) lives in the consumer
+  Project alongside its MachineClaim. A conditional reservation on the provider
+  Machine enforces exclusive use across consumer Projects. Project deletion
+  waits for release; loss of the consumer control plane quarantines the Machine.
+  Public claim status alone is insufficient authority for physical effects.
 - Milo quota `ResourceClaim` remains Milo-owned. Fleet resolves and verifies it
   during reconciliation without storing its UID in the binding record.
 
