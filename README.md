@@ -3,16 +3,15 @@
 Fleet is an incubating Datum service for managing machine fleets and
 their lifecycle through Kubernetes-style APIs.
 
-The repository currently contains the service and deployment scaffold. The API
-group `fleet.datumapis.com` and its initial `v1alpha1` version are reserved, but
-the server intentionally publishes no resources until the first API contract is
-accepted and implemented. This avoids turning template examples into a public
-contract.
+The repository currently contains a non-serving API server scaffold and draft
+contracts. [Standard CRDs are the recommended starting point](docs/api-serving-decision.md)
+for MachineClass, Machine, and MachineClaim. The server scaffold publishes no
+resources and is not the selected serving path for these first APIs.
 
 ## Repository layout
 
 - `cmd/fleet`: service entry point and command-line options
-- `internal/apiserver`: Kubernetes aggregated API server setup
+- `internal/apiserver`: unused aggregated API server scaffold
 - `pkg/apis/fleet`: API group registration
 - `pkg/contracts/v1alpha1`: proposed allocation and installation contracts,
   with validation tests; these types are not served yet

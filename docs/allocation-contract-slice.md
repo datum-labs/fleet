@@ -3,8 +3,8 @@
 This initial contract package turns the settled lifecycle invariants in
 `datum-cloud/infra#5782` at commit `51781e2456367be82281e1443ca56d0686311133`
 into reviewable Go contracts at `pkg/contracts/v1alpha1`. These types are not
-served by the aggregated API server yet; storage, admission, and API machinery
-integration are required before a client can create these resources.
+served yet; CRD schemas, admission, and controllers are required before a client
+can create these resources. See [API serving approach](api-serving-decision.md).
 
 ## Scope
 
@@ -31,9 +31,9 @@ it never proves permission.
 The draft proposal does not yet decide several implementation details. This module
 does not silently choose them:
 
-- Kubernetes API machinery, TypeMeta/ObjectMeta, generated deep-copy code, storage,
-  and REST strategy hooks are omitted. The structs are dependency-free contract
-  models pending the aggregated server scaffold.
+- Kubernetes ObjectMeta, generated deep-copy code, CRD schemas, admission, and
+  controller wiring are omitted. The structs are dependency-free contract models
+  pending implementation of the public CRDs.
 - The authoritative Project API reference shape and cross-API-server resolver are
   open. `SourceReference.Project` therefore remains the proposal's address string,
   while the protected record requires the resolved immutable Project UID.

@@ -1,7 +1,9 @@
 # Deployment configuration
 
-This directory contains Kustomize manifests for the Fleet aggregated
-API server.
+This directory contains a non-serving Kustomize scaffold for an aggregated API
+server. The first public Fleet APIs are expected to use standard CRDs; see the
+[API serving decision](../docs/api-serving-decision.md). Do not deploy this
+scaffold as the first Fleet API implementation.
 
 ## Development overlay
 
@@ -17,15 +19,14 @@ observability and tracing components. It intentionally does not install the
 `APIService` component because Fleet does not publish a resource API
 yet.
 
-Once the first `fleet.datumapis.com/v1alpha1` resources and their storage are
-implemented, add `../../components/api-registration` to an overlay. Registering
-it earlier would advertise an API group with no supported resources.
+The `api-registration` component is retained from the scaffold and is not part
+of the CRD deployment path. An APIService registration would claim the entire
+`fleet.datumapis.com/v1alpha1` path, which the CRDs need to own.
 
 ## Components
 
 - `namespace`: creates `fleet-system`
-- `api-registration`: registers `fleet.datumapis.com/v1alpha1`; deferred until
-  resources exist
+- `api-registration`: unused aggregated-server registration scaffold
 - `cert-manager-ca`: provisions the serving certificate CA
 - `observability`: adds a Prometheus `ServiceMonitor`
 - `tracing`: supplies the Kubernetes API server tracing configuration
