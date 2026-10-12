@@ -99,14 +99,14 @@ func (b BindingRecord) CanRelease() error {
 	if len(b.ReleaseObligations) != 0 {
 		return fmt.Errorf("release obligations remain: %v", b.ReleaseObligations)
 	}
-	if b.QuotaHoldID == "" {
-		return errors.New("missing durable quota hold identity")
+	if b.MiloQuotaClaimUID == "" {
+		return errors.New("missing Milo quota ResourceClaim UID")
 	}
 	return nil
 }
 
 func (b BindingRecord) ValidateIdentity() error {
-	if b.ID == "" || b.Epoch == 0 || b.ConsumerProjectUID == "" || b.ClaimUID == "" || b.LocalMachineClassUID == "" || b.ProviderProjectUID == "" || b.CanonicalMachineClassUID == "" || b.MachineUID == "" {
+	if b.ID == "" || b.Epoch == 0 || b.ConsumerProjectUID == "" || b.ClaimUID == "" || b.LocalMachineClassUID == "" || b.ProviderProjectUID == "" || b.CanonicalMachineClassUID == "" || b.MachineUID == "" || b.MiloQuotaClaimUID == "" {
 		return errors.New("binding identity is incomplete")
 	}
 	return nil

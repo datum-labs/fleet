@@ -10,6 +10,10 @@ investigation describes the proposal at head commit
 Names, scopes, storage choices, operation surfaces, providers, and ownership remain
 subject to review.
 
+Subsequent Fleet design work selects [Milo quota](quota-integration.md) as the
+quota authority for allocations; this report preserves the draft proposal's
+original open questions.
+
 The proposal makes Fleet one service composed of independently authoritative
 subsystems: physical inventory, machine allocation, bare-metal provisioning,
 operating-system configuration, and cluster orchestration. Standalone consumers
