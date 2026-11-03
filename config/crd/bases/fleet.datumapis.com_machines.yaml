@@ -1,0 +1,79 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: machines.fleet.datumapis.com
+spec:
+  group: fleet.datumapis.com
+  scope: Namespaced
+  names:
+    kind: Machine
+    listKind: MachineList
+    plural: machines
+    singular: machine
+    shortNames: [machine]
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Available
+          type: string
+          jsonPath: .status.conditions[?(@.type=="Available")].status
+        - name: Reserved
+          type: string
+          jsonPath: .status.reservation.bindingName
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+      schema:
+        openAPIV3Schema:
+          type: object
+          required: [spec]
+          properties:
+            apiVersion: {type: string}
+            kind: {type: string}
+            metadata: {type: object}
+            spec:
+              type: object
+              required: [providerRef]
+              properties:
+                providerRef:
+                  type: object
+                  required: [apiGroup, kind, namespace, name]
+                  properties:
+                    apiGroup: {type: string, minLength: 1, maxLength: 253}
+                    kind: {type: string, minLength: 1, maxLength: 63}
+                    namespace: {type: string, minLength: 1, maxLength: 63}
+                    name: {type: string, minLength: 1, maxLength: 253}
+              x-kubernetes-validations:
+                - rule: "self == oldSelf"
+                  message: machine provider identity is immutable
+            status:
+              type: object
+              properties:
+                observedGeneration: {type: integer, format: int64, minimum: 0}
+                reservation:
+                  type: object
+                  required: [consumerProjectUID, consumerProjectAddress, namespace, bindingName, epoch]
+                  properties:
+                    consumerProjectUID: {type: string, minLength: 1, maxLength: 128}
+                    consumerProjectAddress: {type: string, minLength: 1, maxLength: 2048}
+                    namespace: {type: string, minLength: 1, maxLength: 63}
+                    bindingName: {type: string, minLength: 1, maxLength: 253}
+                    epoch: {type: integer, format: int64, minimum: 1}
+                conditions:
+                  type: array
+                  x-kubernetes-list-type: map
+                  x-kubernetes-list-map-keys: [type]
+                  items:
+                    type: object
+                    required: [type, status, reason, message, lastTransitionTime]
+                    properties:
+                      type: {type: string, maxLength: 316}
+                      status: {type: string, enum: ["True", "False", Unknown]}
+                      observedGeneration: {type: integer, format: int64, minimum: 0}
+                      reason: {type: string, minLength: 1, maxLength: 1024}
+                      message: {type: string, maxLength: 32768}
+                      lastTransitionTime: {type: string, format: date-time}
