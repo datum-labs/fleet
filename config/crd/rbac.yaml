@@ -1,0 +1,44 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fleet-machineclaim-consumer
+rules:
+  - apiGroups: [fleet.datumapis.com]
+    resources: [machineclasses]
+    verbs: [get, list, watch]
+  - apiGroups: [fleet.datumapis.com]
+    resources: [machineclaims]
+    verbs: [create, delete, get, list, patch, update, watch]
+  - apiGroups: [fleet.datumapis.com]
+    resources: [machineclaims/status]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fleet-provider
+rules:
+  - apiGroups: [fleet.datumapis.com]
+    resources: [machineclasses]
+    verbs: [create, delete, get, list, patch, update, watch]
+  - apiGroups: [fleet.datumapis.com]
+    resources: [machineclasses/status]
+    verbs: [get]
+  - apiGroups: [fleet.datumapis.com]
+    resources: [machines, machines/status]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fleet-controller
+rules:
+  - apiGroups: [fleet.datumapis.com]
+    resources: [machineclasses, machines, machineclaims]
+    verbs: [create, delete, get, list, patch, update, watch]
+  - apiGroups: [fleet.datumapis.com]
+    resources: [machineclasses/status, machines/status, machineclaims/status]
+    verbs: [get, patch, update]
+  - apiGroups: [fleet.datumapis.com]
+    resources: [machines/finalizers, machineclaims/finalizers]
+    verbs: [update]
