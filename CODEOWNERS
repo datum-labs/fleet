@@ -14,4 +14,4 @@
 # Split by path where different teams own different trees. GitHub applies the
 # LAST matching rule, so keep the catch-all first.
 
-* @datum-cloud/engineering
+* @datum-labs/sre
